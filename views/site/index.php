@@ -1,7 +1,6 @@
 <?php
-
+use dosamigos\fileupload\FileUploadUI;
 /* @var $this yii\web\View */
-
 $this->title = 'My Yii Application';
 ?>
 <div class="site-index">
@@ -18,6 +17,27 @@ $this->title = 'My Yii Application';
 
         <div class="row">
             <div class="col-lg-4">
+<?= FileUploadUI::widget([
+        'model' => $model,
+        'attribute' => 'profile_pic',
+        'url' => ['files/add'],
+         'gallery' => true,
+         'fieldOptions' => [
+             'accept' => 'image/*',
+         ],
+         'clientOptions' => [  
+             'maxFileSize' => 2000000
+          ],
+          'clientEvents' => [
+              'fileuploaddone' => 'function(e, data) {
+                                      jQuery(".fb-image-profile").attr("src",data.result);
+                                  }',
+              'fileuploadfail' => 'function(e, data) {
+                                      
+                                  }',
+          ],
+]);
+?>
                 <h2>Heading</h2>
 
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et

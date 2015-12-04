@@ -8,6 +8,8 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\User;
+use app\models\File;
 
 class SiteController extends Controller
 {
@@ -49,7 +51,10 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        return $this->render('index');
+        $model=new File();
+        return $this->render('index', [
+            'model' => $model,
+        ]);
     }
 
     public function actionLogin()
