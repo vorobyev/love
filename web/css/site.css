@@ -89,3 +89,17 @@ a.desc:after {
     padding: 10px 20px;
     margin: 0 0 15px 0;
 }
+
+.navbar {
+    min-height:20px;
+}
+
+.navbar-brand {
+    padding:10px 15px;
+    height:20px;
+}
+
+.navbar-nav  li  a {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}

@@ -9,6 +9,89 @@ use app\models\File;
 
 class FilesController extends Controller{
     public $kk;
+ 
+    public function ResizeImage ($filename, $size = 300, $quality = 85, $path_save, $new_filename)
+    {
+        /*
+        * Адрес директории для сохранения картинки
+        */
+        $dir=dirname($filename)."/".$path_save."/";
+        
+        /*
+        * Извлекаем формат изображения, то есть получаем 
+        * символы находящиеся после последней точки
+        */
+        $ext=strtolower(end((explode(".", $filename))));
+        
+        /*
+        * Допустимые форматы
+        */
+        $extentions = array('jpg', 'gif', 'png', 'bmp');
+    
+        if (in_array($ext, $extentions)) {   
+             $percent = $size; // Ширина изображения миниатюры
+        
+             list($width, $height) = getimagesize($filename); // Возвращает ширину и высоту
+             $newheight    = $height * $percent;
+             $newwidth    = $newheight / $width;
+        
+             $thumb = imagecreatetruecolor($percent, $newwidth);
+        
+             switch ($ext) {
+                 case 'jpg':
+                     $source = @imagecreatefromjpeg($filename);
+                     break;
+                
+                  case 'gif':
+                     $source = @imagecreatefromgif($filename);
+                     break;
+                
+                  case 'png':
+                     $source = @imagecreatefrompng($filename);
+                     break;
+                
+                  case 'bmp':
+                      $source = @imagecreatefromwbmp($filename);
+              }
+    
+            /*
+            * Функция наложения, копирования изображения
+            */
+            imagecopyresized($thumb, $source, 0, 0, 0, 0, $percent, $newwidth, $width, $height);
+        
+            /*
+            * Создаем изображение
+            */
+            switch ($ext) {
+                case 'jpg':
+                    imagejpeg($thumb, $dir . $new_filename, $quality);
+                    break;
+                    
+                case 'gif':
+                    imagegif($thumb, $dir . $new_filename);
+                    break;
+                    
+                case 'png':
+                    imagepng($thumb, $dir . $new_filename, $quality);
+                    break;
+                    
+                case 'bmp':
+                    imagewbmp($thumb, $dir . $new_filename);
+                    break;
+            }    
+    } else {
+        return false;
+    }
+    
+    /* 
+    *  Очищаем оперативную память сервера от временных файлов, 
+    *  которые потребовались для создания миниатюры
+    */
+        @imagedestroy($thumb);         
+        @imagedestroy($source);  
+            
+        return true;
+    }
     
     public function actionAdd(){
        $model = new File();
@@ -32,25 +115,33 @@ class FilesController extends Controller{
                    }
                    $path = $model->getProfilePictureFile();
                    $image->saveAs($path);
+                   
+                   $this->ResizeImage ($path, 100, 85, "thumbnail",basename($path));
+                   $this->ResizeImage ($path, 1024, 85, "medium",basename($path));
+
                }
                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
                $kk=$model->getProfilePictureUrl();
-               
-               $exif = exif_read_data("/var/www/html/basic/web/".$kk, 'IFD0');
-                if ($exif!==false) {
-                    $exif["path"]=$path;
-                    $model->save(false,$exif);
-                } else {
+                try {
+                    $exif = exif_read_data("/var/www/html/basic/web/".$kk, 'IFD0');
+                    if ($exif!==false) {
+                        $exif["path"]=$path;
+                        $model->save(false,$exif,$model->profile_pic);
+                    } else {
+                        $model->save(false,$path,$model->profile_pic);
+                    }
+                }
+                catch (Exception $e) {
                     $model->save(false,$path,$model->profile_pic);
                 }
-
-               
+                $kkk=$model->getProfilePictureUrl("medium/");
+                $kkkk=$model->getProfilePictureUrl("thumbnail/");
                return ["files"=> [
   [
     "name"=> $model->profile_pic,
     "size"=> $image->size,
-    "url"=> $kk,
-    "thumbnailUrl"=> $kk,
+    "url"=> $kkk,
+    "thumbnailUrl"=> $kkkk,
     "deleteUrl"=> $kk,
     "deleteType"=> "DELETE"
   ]

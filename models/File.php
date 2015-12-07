@@ -17,16 +17,28 @@ class File Extends ActiveRecord {
     public function save($runValidation = false, $attributeNames = NULL, $name=NULL)//тут ошибки
     {
         if (gettype($attributeNames)=="array"){
-            $this->name=$attributeNames['FileName'];
+            $this->name=$name;
             $this->time =(isset($attributeNames["DateTime"])) ? date("Y-m-d H:i:s", strtotime($attributeNames['DateTime'])):date ("Y-m-d H:i:s", filemtime($attributeNames["path"]));
 
         } else {
             $this->name=$name;
             $this->time=date ("Y-m-d H:i:s", filemtime($attributeNames));
         }
+        $this->href=$this->generateStr($this->name."cxfcnmt",2);//счастье
         $this->access=0;
         $this->uploadTime=date("Y-m-d H:i:s");
         return parent::save($runValidation);
+    }
+   
+    private function generateStr($value,$key) 
+    {
+        $keyHash = md5(Yii::$app->params["key".$key], true);
+        if ($key==1) {
+            return str_replace("/","_",base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $keyHash, $value, MCRYPT_MODE_ECB)));
+        } else {
+            return urlencode(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $keyHash, $value, MCRYPT_MODE_ECB)));
+        }
+        //return str_replace(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $keyHash, $value, MCRYPT_MODE_ECB)));
     }
     
     public function getProfilePictureFile()
@@ -34,11 +46,11 @@ class File Extends ActiveRecord {
         return isset($this->profile_pic) ? Yii::$app->params['uploadPath'] ."/". $this->profile_pic : null;
     }
 
-    public function getProfilePictureUrl()
+    public function getProfilePictureUrl($subFolder="")
     {
         // return a default image placeholder if your source profile_pic is not found
         $profile_pic = isset($this->profile_pic) ? $this->profile_pic : 'default_user.jpg';
-        return Yii::$app->params['uploadUrl'] . '/' . $profile_pic;
+        return Yii::$app->params['uploadUrl'] . '/'.$subFolder . $profile_pic;
     }
 
     /**
@@ -63,7 +75,7 @@ class File Extends ActiveRecord {
         $ext = end((explode(".", $image->name)));
 
         // generate a unique file name
-        $this->profile_pic = Yii::$app->security->generateRandomString().".{$ext}";
+        $this->profile_pic = $this->generateStr($image->name."elfxf",1).".{$ext}";//удача
 
         // the uploaded profile picture instance
         return $image;
