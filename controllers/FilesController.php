@@ -37,14 +37,13 @@ class FilesController extends Controller{
                $kk=$model->getProfilePictureUrl();
                
                $exif = exif_read_data("/var/www/html/basic/web/".$kk, 'IFD0');
-echo $exif===false ? "Не найдено данных заголовка.<br />\n" : "Изображение содержит заголовки<br />\n";
+                if ($exif!==false) {
+                    $exif["path"]=$path;
+                    $model->save(false,$exif);
+                } else {
+                    $model->save(false,$path,$model->profile_pic);
+                }
 
-$exif = exif_read_data($kk, 0, true);
-foreach ($exif as $key => $section) {
-    foreach ($section as $name => $val) {
-        echo "$key.$name: $val<br />\n";
-    }
-}
                
                return ["files"=> [
   [

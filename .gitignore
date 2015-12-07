@@ -28,3 +28,4 @@ phpunit.phar
 
 #my ignored layers
 *~
+/web/image

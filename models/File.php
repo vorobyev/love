@@ -5,7 +5,7 @@ use Yii;
 use yii\db\ActiveRecord;
 use yii\web\UploadedFile;
 
-class File Extends Model {
+class File Extends ActiveRecord {
     public $profile_pic;
     public $id;
     
@@ -14,9 +14,19 @@ class File Extends Model {
         return "photos";
     }
     
-    public function save()
+    public function save($runValidation = false, $attributeNames = NULL, $name=NULL)//тут ошибки
     {
-        
+        if (gettype($attributeNames)=="array"){
+            $this->name=$attributeNames['FileName'];
+            $this->time =(isset($attributeNames["DateTime"])) ? date("Y-m-d H:i:s", strtotime($attributeNames['DateTime'])):date ("Y-m-d H:i:s", filemtime($attributeNames["path"]));
+
+        } else {
+            $this->name=$name;
+            $this->time=date ("Y-m-d H:i:s", filemtime($attributeNames));
+        }
+        $this->access=0;
+        $this->uploadTime=date("Y-m-d H:i:s");
+        return parent::save($runValidation);
     }
     
     public function getProfilePictureFile()
