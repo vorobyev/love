@@ -2,30 +2,47 @@
 
 namespace app\models;
 use yii\db\ActiveRecord;
+use yii\web\IdentityInterface;
 
-class User extends ActiveRecord implements IdentityInterface 
+class User extends ActiveRecord implements IdentityInterface
 {
-    public $name;
-    public $password;
-
     public static function tableName()
     {
         return "users";
     }
-    
-    public function rules()
+
+    public static function findIdentity($id)
     {
-        return [
-            // username and password are both required
-            [['name', 'password'], 'required'],
-            // rememberMe must be a boolean value
-            ['rememberMe', 'boolean'],
-            // password is validated by validatePassword()
-            [['password','user'], 'validateUser'],
-        ];
+       return static::findOne($id);
+    }
+
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        return static::findOne(['accessToken' => $token]);    
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function getAuthKey()
+    {
+        return $this->authKey;
+    }
+
+    public function validateAuthKey($authKey)
+    {
+        return $this->getAuthKey() === $authKey;
+    }
+
+    public function validatePassword($password)
+    {
+        return $this->password === $password;
     }
     
-    public function validateUser($attribute, $params){
-        
+    public static function findByUsername($username)
+    {
+        return static::findOne(['username' => $username]);
     }
 }

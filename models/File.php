@@ -79,5 +79,14 @@ class File Extends ActiveRecord {
 
         // the uploaded profile picture instance
         return $image;
-    }      
+    }    
+    
+    public function getImage($href=false) 
+    {
+        if ($href==false){
+            return static::findOne(['href'=>$href]);
+        } else {
+            return static::findOne(['id'=>'58']); 
+        }
+    }
 }
