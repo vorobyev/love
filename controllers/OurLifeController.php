@@ -11,8 +11,8 @@ class OurLifeController extends Controller {
     
     public function actionViewPhoto ()
     {
-        if (Yii::$app->session->isActive){
-            $this->render('login');
+        if (!Yii::$app->session->isActive){
+            return $this->redirect('index.php?r=site/login');
         }
     }
 }
