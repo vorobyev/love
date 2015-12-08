@@ -12,12 +12,13 @@ class OurLifeController extends Controller {
     
     public function actionViewPhoto ()
     {
-        if (!Yii::$app->user->isGuest){
+        if (Yii::$app->user->isGuest){
             return $this->redirect('index.php?r=site/login');
         } else {
-            $href=Yii::$app->request->get('image');
-            $model=File::getImage($href);
-            $this->render();
+            $href=urlencode(Yii::$app->request->get('image'));
+            $file=new File();
+            $model=$file->getImage($href);
+            return $this->render('image',['image'=>$model]);
         }
         
     }

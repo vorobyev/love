@@ -83,10 +83,10 @@ class File Extends ActiveRecord {
     
     public function getImage($href=false) 
     {
-        if ($href==false){
-            return static::findOne(['href'=>$href]);
+        if ($href!==false){
+            return self::find(['href'=>$href])->where(['href'=>$href])->limit(5)->one();
         } else {
-            return static::findOne(['id'=>'58']); 
+            return self::find()->where(['id'=>'58'])->limit(5)->one(); 
         }
     }
 }
