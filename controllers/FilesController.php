@@ -32,10 +32,10 @@ class FilesController extends Controller{
              $percent = $size; // Ширина изображения миниатюры
         
              list($width, $height) = getimagesize($filename); // Возвращает ширину и высоту
-             $newheight    = $height * $percent;
-             $newwidth    = $newheight / $width;
+             $newwidth    = $width * $percent;
+             $newheight    = $newwidth / $height;
         
-             $thumb = imagecreatetruecolor($percent, $newwidth);
+             $thumb = imagecreatetruecolor($newheight, $percent);
         
              switch ($ext) {
                  case 'jpg':
@@ -57,7 +57,7 @@ class FilesController extends Controller{
             /*
             * Функция наложения, копирования изображения
             */
-            imagecopyresized($thumb, $source, 0, 0, 0, 0, $percent, $newwidth, $width, $height);
+            imagecopyresized($thumb, $source, 0, 0, 0, 0, $newheight, $percent, $width, $height);
         
             /*
             * Создаем изображение

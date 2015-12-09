@@ -6,6 +6,7 @@ use Yii;
 use yii\web\Controller;
 use app\models\User;
 use app\models\File;
+use yii\data\Pagination;
 
 class OurLifeController extends Controller {
     
@@ -17,8 +18,19 @@ class OurLifeController extends Controller {
         } else {
             $href=urlencode(Yii::$app->request->get('image'));
             $file=new File();
-            $model=$file->getImage($href);
-            return $this->render('image',['image'=>$model]);
+            $query=File::find();
+            $pagination=new Pagination([
+                'defaultPageSize'=>7,
+                'totalCount'=>$query->count()
+            ]);
+            $model=$query->orderBy("id")
+                    ->offset($pagination->offset)
+                    ->limit($pagination->limit)
+                    ->all();
+            return $this->render('image',[
+                'image'=>$model,
+                'pagination'=>$pagination
+                ]);
         }
         
     }

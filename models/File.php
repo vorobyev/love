@@ -7,7 +7,6 @@ use yii\web\UploadedFile;
 
 class File Extends ActiveRecord {
     public $profile_pic;
-    public $id;
     
     public static function tableName()
     {
@@ -81,12 +80,12 @@ class File Extends ActiveRecord {
         return $image;
     }    
     
-    public function getImage($href=false) 
+    public function getImage($href) 
     {
-        if ($href!==false){
-            return self::find(['href'=>$href])->where(['href'=>$href])->limit(5)->one();
+        if ($href!==""){
+            return self::find()->where(['href'=>$href])->limit(5)->all();
         } else {
-            return self::find()->where(['id'=>'58'])->limit(5)->one(); 
+            return self::find(); 
         }
     }
 }
