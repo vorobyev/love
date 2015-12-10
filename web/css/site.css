@@ -1,6 +1,7 @@
 html,
 body {
     height: 100%;
+    background-color:blue;
 }
 
 .wrap {
@@ -11,7 +12,7 @@ body {
 }
 
 .wrap > .container {
-    padding: 70px 15px 20px;
+    padding: 40px 15px 20px;
 }
 
 .footer {
@@ -102,4 +103,21 @@ a.desc:after {
 .navbar-nav  li  a {
     padding-top: 10px;
     padding-bottom: 10px;
+}
+
+.site-content{
+    border:black solid 1px;
+    margin:auto;
+    width:800px;
+}
+.site-index{
+    border:red solid 1px;
+}
+
+.slick-track div img {
+    display:inline;
+}
+
+.slick-track div {
+    text-align:center;
 }

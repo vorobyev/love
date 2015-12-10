@@ -6,22 +6,22 @@ use evgeniyrru\yii2slick\Slick;
 $this->title = 'Наш склад счастья';
 $items=[];
 foreach ($image as $item){
-    $items=array_merge($items,['<img src="image/thumbnail/'.$item->name.'">']);
+    $items=array_merge($items,['<img src="image/'.$item->name.'">']);
 }
+//$items=['<img src="image/thumbnail/'.$image[0]->name.'">'];
 ?>
 <div class="site-index">
 
     
 <?= LinkPager::widget(['pagination'=>$pagination]) ?>
-<?= var_dump($image[0]->id) ?>
-
+    
 <?=Slick::widget([
  
         // HTML tag for container. Div is default.
         'itemContainer' => 'div',
  
         // HTML attributes for widget container
-        'containerOptions' => ['class' => 'container'],
+        'containerOptions' => ['class' => 'site-content'],
  
         // Items for carousel. Empty array not allowed, exception will be throw, if empty 
         'items' => $items,
@@ -32,14 +32,27 @@ foreach ($image as $item){
         // settings for js plugin
         // @see http://kenwheeler.github.io/slick/#settings
         'clientOptions' => [
+            'infinite'=>true,
+            'fade'=> true,
             'centerMode'=>true,
-            'slidesToShow'=> 3,
-            'slidesToScroll'=> 1
+            'cssEase'=> 'linear',
+            'adaptiveHeight'=>true
+            ]
             // note, that for params passing function you should use JsExpression object
             //'onAfterChange' => new JsExpression('function() {console.log("The cat has shown")}'),
-        ],
  
     ]); ?>
+
+ <?php 
+     yii\bootstrap\Modal::begin([
+    'header' => '<h2>Hello world</h2>',
+    'toggleButton' => ['label' => 'click me'],
+    ]);
+
+echo 'Say hello...';
+
+yii\bootstrap\Modal::end();
+?>
 
 </div>
 

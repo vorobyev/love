@@ -10,7 +10,7 @@ use app\models\File;
 class FilesController extends Controller{
     public $kk;
  
-    public function ResizeImage ($filename, $size = 300, $quality = 85, $path_save, $new_filename)
+    public function ResizeImage ($filename, $n_height,$n_width , $quality = 85, $path_save, $new_filename)
     {
         /*
         * Адрес директории для сохранения картинки
@@ -29,11 +29,33 @@ class FilesController extends Controller{
         $extentions = array('jpg', 'gif', 'png', 'bmp');
     
         if (in_array($ext, $extentions)) {   
-             $percent = $size; // Ширина изображения миниатюры
+              // Высота изображения миниатюры
         
              list($width, $height) = getimagesize($filename); // Возвращает ширину и высоту
-             $newwidth    = $width * $percent;
-             $newheight    = $newwidth / $height;
+             if ($width>$n_width) {
+                 if ($height>$n_height){
+                     if (($widtn-$n_width)>($height-$n_height)){
+                        $newheight    = $height * $n_width;
+                        $newwidth    = $newheight / $height;
+                        $percent = $n_width;
+                     } else {
+                        $newwidth    = $width * $n_height;
+                        $newheight    = $newwidth / $height;  
+                        $percent = $n_height;
+                     }
+                 } else {
+                    $newheight    = $height * $n_width;
+                    $newwidth    = $newheight / $height;
+                    $percent = $n_width;
+                 }
+             } else {
+                 if ($height>$n_height) {
+                    $newwidth    = $width * $n_height;
+                    $newheight    = $newwidth / $height;
+                    $percent = $n_height;
+                 }
+             }
+
         
              $thumb = imagecreatetruecolor($newheight, $percent);
         
@@ -115,9 +137,9 @@ class FilesController extends Controller{
                    }
                    $path = $model->getProfilePictureFile();
                    $image->saveAs($path);
-                   
-                   $this->ResizeImage ($path, 100, 85, "thumbnail",basename($path));
-                   $this->ResizeImage ($path, 1024, 85, "medium",basename($path));
+                   list($width, $height) = getimagesize($path);
+                   $this->ResizeImage ($path, 100, 60, 85, "thumbnail",basename($path));
+                   $this->ResizeImage ($path, 1024, 768, 85, "medium",basename($path));
 
                }
                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
