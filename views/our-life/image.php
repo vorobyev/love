@@ -6,7 +6,7 @@ use evgeniyrru\yii2slick\Slick;
 $this->title = 'Наш склад счастья';
 $items=[];
 foreach ($image as $item){
-    $items=array_merge($items,['<img src="image/'.$item->name.'">']);
+    $items=array_merge($items,['<img src="image/medium/'.$item->name.'">']);
 }
 //$items=['<img src="image/thumbnail/'.$image[0]->name.'">'];
 ?>

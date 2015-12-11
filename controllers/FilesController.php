@@ -10,7 +10,7 @@ use app\models\File;
 class FilesController extends Controller{
     public $kk;
  
-    public function ResizeImage ($filename, $n_height,$n_width , $quality = 85, $path_save, $new_filename)
+    public function ResizeImage ($filename, $n_width,$n_height , $quality = 85, $path_save, $new_filename)
     {
         /*
         * Адрес директории для сохранения картинки
@@ -34,30 +34,29 @@ class FilesController extends Controller{
              list($width, $height) = getimagesize($filename); // Возвращает ширину и высоту
              if ($width>$n_width) {
                  if ($height>$n_height){
-                     if (($widtn-$n_width)>($height-$n_height)){
-                        $newheight    = $height * $n_width;
-                        $newwidth    = $newheight / $height;
-                        $percent = $n_width;
+                     if (($width/$n_width)>($height/$n_height)){
+                        $newheight    = $n_width * $height/$width;
+                        $newwidth    = $n_width;
                      } else {
-                        $newwidth    = $width * $n_height;
-                        $newheight    = $newwidth / $height;  
-                        $percent = $n_height;
+                        $newwidth    = $n_height * $width/$height; 
+                        $newheight    = $n_height;
                      }
                  } else {
-                    $newheight    = $height * $n_width;
-                    $newwidth    = $newheight / $height;
-                    $percent = $n_width;
+                        $newheight    = $n_width * $height/$width;
+                        $newwidth    = $n_width;
                  }
              } else {
                  if ($height>$n_height) {
-                    $newwidth    = $width * $n_height;
-                    $newheight    = $newwidth / $height;
-                    $percent = $n_height;
+                        $newwidth    = $n_height * $width/$height; 
+                        $newheight    = $n_height;
+                 } else {
+                     $newwidth=$width;
+                     $newheight=$height;
                  }
              }
 
         
-             $thumb = imagecreatetruecolor($newheight, $percent);
+             $thumb = imagecreatetruecolor($newwidth, $newheight);
         
              switch ($ext) {
                  case 'jpg':
@@ -79,7 +78,7 @@ class FilesController extends Controller{
             /*
             * Функция наложения, копирования изображения
             */
-            imagecopyresized($thumb, $source, 0, 0, 0, 0, $newheight, $percent, $width, $height);
+            imagecopyresized($thumb, $source, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
         
             /*
             * Создаем изображение
@@ -139,7 +138,7 @@ class FilesController extends Controller{
                    $image->saveAs($path);
                    list($width, $height) = getimagesize($path);
                    $this->ResizeImage ($path, 100, 60, 85, "thumbnail",basename($path));
-                   $this->ResizeImage ($path, 1024, 768, 85, "medium",basename($path));
+                   $this->ResizeImage ($path, 1024, 600, 85, "medium",basename($path));
 
                }
                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
