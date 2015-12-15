@@ -20,8 +20,9 @@ class OurLifeController extends Controller {
             $file=new File();
             $query=File::find();
             $pagination=new Pagination([
-                'defaultPageSize'=>7,
-                'totalCount'=>$query->count()
+                'defaultPageSize'=>81,
+                'totalCount'=>$query->count(),
+                'pageSizeLimit' => [1, 81]
             ]);
             $model=$query->orderBy("id")
                     ->offset($pagination->offset)

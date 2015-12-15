@@ -1,7 +1,7 @@
 html,
 body {
     height: 100%;
-    background-color:blue;
+    background-color:white;
 }
 
 .wrap {
@@ -110,9 +110,6 @@ a.desc:after {
     margin:auto;
     width:800px;
 }
-.site-index{
-    border:red solid 1px;
-}
 
 .slick-track div img {
     display:inline;
@@ -120,4 +117,15 @@ a.desc:after {
 
 .slick-track div {
     text-align:center;
+}
+
+table.grid tbody tr td{
+    padding:5px;
+    text-align:center;
+    border:1px solid black;
+}
+
+table {
+    align:center;
+    margin:0 auto;
 }

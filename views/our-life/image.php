@@ -2,18 +2,47 @@
 use dosamigos\fileupload\FileUploadUI;
 use yii\widgets\LinkPager;
 use evgeniyrru\yii2slick\Slick;
+use yii\widgets\Pjax;
+use yii\helpers\Html;
+
 /* @var $this yii\web\View */
 $this->title = 'Наш склад счастья';
 $items=[];
+$itemsThumb=[];
+foreach ($image as $item){
+    $itemsThumb=array_merge($itemsThumb,[Html::a('<img src="image/thumbnail/'.$item->name.'">',['our-life/view-photo','href'=>$item->href])]);
+}
 foreach ($image as $item){
     $items=array_merge($items,['<img src="image/medium/'.$item->name.'">']);
 }
+
 //$items=['<img src="image/thumbnail/'.$image[0]->name.'">'];
 ?>
 <div class="site-index">
 
+     
+<?php Pjax::begin(); ?>  
     
 <?= LinkPager::widget(['pagination'=>$pagination]) ?>
+    
+<?php
+$iter=1;
+echo "<table class=\"grid\">";
+foreach ($itemsThumb as $item){
+    if ($iter%9==1) {
+        echo "<tr>";
+    }
+    echo "<td>".$item."</td>";
+    
+    
+    if ($iter%9==0) {
+        echo "</tr>";
+    }
+    $iter+=1;
+}
+echo "</table>";
+?>    
+
     
 <?=Slick::widget([
  
@@ -44,15 +73,20 @@ foreach ($image as $item){
     ]); ?>
 
  <?php 
+
+    
      yii\bootstrap\Modal::begin([
     'header' => '<h2>Hello world</h2>',
     'toggleButton' => ['label' => 'click me'],
+    'clientOptions'=> ['show'=>true]
     ]);
 
 echo 'Say hello...';
 
 yii\bootstrap\Modal::end();
+    Pjax::end();
 ?>
+
 
 </div>
 
