@@ -16,7 +16,7 @@ class OurLifeController extends Controller {
         if (Yii::$app->user->isGuest){
             return $this->redirect('index.php?r=site/login');
         } else {
-            $href=urlencode(Yii::$app->request->get('image'));
+            $href=Yii::$app->request->get('href');
             $file=new File();
             $query=File::find();
             $pagination=new Pagination([
@@ -28,7 +28,16 @@ class OurLifeController extends Controller {
                     ->offset($pagination->offset)
                     ->limit($pagination->limit)
                     ->all();
+            $index=0;
+            foreach ($model as $value){
+                if ($value->href==$href){
+                    break;
+                }
+                $index+=1;
+            }
             return $this->render('image',[
+                'index'=>$index,
+                'href'=>$href,
                 'image'=>$model,
                 'pagination'=>$pagination
                 ]);

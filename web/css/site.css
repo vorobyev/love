@@ -129,3 +129,12 @@ table {
     align:center;
     margin:0 auto;
 }
+
+.modal-dialog{
+    width:1030px;
+
+}
+
+.slick-list {
+    min-height:600px;
+}

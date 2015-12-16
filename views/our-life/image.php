@@ -4,6 +4,7 @@ use yii\widgets\LinkPager;
 use evgeniyrru\yii2slick\Slick;
 use yii\widgets\Pjax;
 use yii\helpers\Html;
+use yii\web\JsExpression;
 
 /* @var $this yii\web\View */
 $this->title = 'Наш склад счастья';
@@ -21,7 +22,7 @@ foreach ($image as $item){
 <div class="site-index">
 
      
-<?php Pjax::begin(); ?>  
+<?php //Pjax::begin(); ?>  
     
 <?= LinkPager::widget(['pagination'=>$pagination]) ?>
     
@@ -41,10 +42,8 @@ foreach ($itemsThumb as $item){
     $iter+=1;
 }
 echo "</table>";
-?>    
 
-    
-<?=Slick::widget([
+$slick= Slick::widget([
  
         // HTML tag for container. Div is default.
         'itemContainer' => 'div',
@@ -65,26 +64,34 @@ echo "</table>";
             'fade'=> true,
             'centerMode'=>true,
             'cssEase'=> 'linear',
-            'adaptiveHeight'=>true
-            ]
+            'adaptiveHeight'=>false,
+            'adaptiveWidth'=>true,
+            'initialSlide'=>$index,
+            'useCSS'=>false,
             // note, that for params passing function you should use JsExpression object
-            //'onAfterChange' => new JsExpression('function() {console.log("The cat has shown")}'),
+            'onReInit' => new JsExpression('function() {alert(111);}')
+            ]
  
-    ]); ?>
+    ]);  
+
+      yii\bootstrap\Modal::begin([
+    'header' => "Просмотр",
+    'clientOptions'=> ($href=="") ? ['show'=>false] : ['show'=>true]
+    ]); 
+
+  ?> 
+
 
  <?php 
 
     
-     yii\bootstrap\Modal::begin([
-    'header' => '<h2>Hello world</h2>',
-    'toggleButton' => ['label' => 'click me'],
-    'clientOptions'=> ['show'=>true]
-    ]);
 
-echo 'Say hello...';
+
+  echo $slick; 
 
 yii\bootstrap\Modal::end();
-    Pjax::end();
+    //Pjax::end();
+
 ?>
 
 
