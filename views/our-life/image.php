@@ -60,17 +60,17 @@ $slick= Slick::widget([
         // settings for js plugin
         // @see http://kenwheeler.github.io/slick/#settings
         'clientOptions' => [
-            'infinite'=>true,
+            'infinite'=>false,
             'fade'=> true,
             'centerMode'=>true,
             'cssEase'=> 'linear',
             'adaptiveHeight'=>false,
-            'adaptiveWidth'=>true,
+            'variableWidth'=>false,
             'initialSlide'=>$index,
             'useCSS'=>false,
             // note, that for params passing function you should use JsExpression object
-            'onReInit' => new JsExpression('function() {alert(111);}')
-            ]
+            ],
+ 
  
     ]);  
 

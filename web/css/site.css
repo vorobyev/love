@@ -106,7 +106,7 @@ a.desc:after {
 }
 
 .site-content{
-    border:black solid 1px;
+    /*border:black solid 1px;*/
     margin:auto;
     width:800px;
 }
