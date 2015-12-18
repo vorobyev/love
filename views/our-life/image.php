@@ -8,10 +8,11 @@ use yii\web\JsExpression;
 
 /* @var $this yii\web\View */
 $this->title = 'Наш склад счастья';
+Pjax::begin(['id'=>'myPjax']); 
 $items=[];
 $itemsThumb=[];
 foreach ($image as $item){
-    $itemsThumb=array_merge($itemsThumb,[Html::a('<img src="image/thumbnail/'.$item->name.'">',['our-life/view-photo','href'=>$item->href])]);
+    $itemsThumb=array_merge($itemsThumb,[Html::a('<img src="image/thumbnail/'.$item->name.'">',['our-life/view-photo','href'=>$item->href,'page'=>($pagination->getPage()==0)?1:$pagination->getPage()+1])]);
 }
 foreach ($image as $item){
     $items=array_merge($items,['<img src="image/medium/'.$item->name.'">']);
@@ -22,10 +23,118 @@ foreach ($image as $item){
 <div class="site-index">
 
      
-<?php //Pjax::begin(); ?>  
+ 
     
 <?= LinkPager::widget(['pagination'=>$pagination]) ?>
+<?php $link=$pagination->getLinks(); echo var_dump($link);
+    if (!isset($link['next'])){
+        echo Html::a('',['our-life/view-photo','href'=>$modelPrev[0]->href,'page'=>$pagination->getPage()-1],['id'=>'prevPage']);
+        echo Html::a('',['our-life/view-photo','href'=>$modelFirst[0]->href,'page'=>1],['id'=>'firstPage']);
+                $this->registerJs("
+                jQuery(document).ready(function () {
+                $('#w0').on('beforeChange',function(event, slick, currentSlide, nextSlide) {
+                alert(\"Событие последней кнопки\");
+                    if ((currentSlide==".($countQuery%$pagination->limit-1).")&&(nextSlide==0)){                     
+                        $('.modal-backdrop').remove();
+                        $('#w2').modal('hide');
+                        var link = $('#firstPage')[0];
+                        var linkEvent = document.createEvent('MouseEvents');
+                        
+                        linkEvent.initEvent('click', true, true);
+                        link.dispatchEvent(linkEvent);
+                        e.preventDefault();
+                        return false;
+                    } else if ((currentSlide==0)&&(nextSlide==".($countQuery%$pagination->limit-1).")) {
+                        $('.modal-backdrop').remove();
+                        $('#w2').modal('hide');
+                        var link = $('#prevPage')[0];
+                        var linkEvent = document.createEvent('MouseEvents');
+                        
+                        linkEvent.initEvent('click', true, true);
+                        link.dispatchEvent(linkEvent);
+                        e.preventDefault();
+                        return false;                       
+                    }
+                });
+                });"                  
+                );        
+    }
+    if (!isset($link['prev'])){
+         echo Html::a('',['our-life/view-photo','href'=>$modelLast[0]->href,'page'=>$pagination->pageCount],['id'=>'lastPage']);
+         echo Html::a('',['our-life/view-photo','href'=>$modelNext[0]->href,'page'=>$pagination->getPage()+2],['id'=>'nextPage']);
+                $this->registerJs("
+                jQuery(document).ready(function () {
+                $('#w0').on('beforeChange',function(event, slick, currentSlide, nextSlide) {
+                alert(\"Событие первой кнопки\");
+                if ((currentSlide==0)&&(nextSlide==".($pagination->limit-1).")){
+                    $('.modal-backdrop').remove();
+                    $('#w2').modal('hide');
+                        var link = $('#lastPage')[0];
+                        var linkEvent = document.createEvent('MouseEvents');
+                        linkEvent.initEvent('click', true, true);
+                        link.dispatchEvent(linkEvent);
+                        e.preventDefault();
+                        return false;
+                    } else if ((currentSlide==".($pagination->limit-1).")&&(nextSlide==0)){
+                    $('.modal-backdrop').remove();
+                    $('#w2').modal('hide');
+                        var link = $('#nextPage')[0];
+                        var linkEvent = document.createEvent('MouseEvents');
+                        linkEvent.initEvent('click', true, true);
+                        link.dispatchEvent(linkEvent);
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+    });" );       
+    }
+    if ((isset($link['prev']))&&(isset($link['next']))) {
+        echo Html::a('',['our-life/view-photo','href'=>$modelNext[0]->href,'page'=>$pagination->getPage()+1],['id'=>'nextPage']);
+        echo Html::a('',['our-life/view-photo','href'=>$modelLast[0]->href,'page'=>$pagination->getPage()-1],['id'=>'prevPage']);
+        $this->registerJs("
+                jQuery(document).ready(function () {
+                $('#w0').on('beforeChange',function(event, slick, currentSlide, nextSlide) {
+                alert(\"Событие средних кнопок\");
+                if ((currentSlide==0)&&(nextSlide==".($countQuery%$pagination->limit-1).")){
+                    $('.modal-backdrop').remove();
+                    $('#w2').modal('hide');
+                        var link = $('#prevPage')[0];
+                        var linkEvent = document.createEvent('MouseEvents');
+                        linkEvent.initEvent('click', true, true);
+                        link.dispatchEvent(linkEvent);
+                        e.preventDefault();
+                        return false;
+                    } else if ((currentSlide==".($countQuery%$pagination->limit-1).")&&(nextSlide==0)){
+                    $('.modal-backdrop').remove();
+                    $('#w2').modal('hide');
+                        var link = $('#nextPage')[0];
+                        var linkEvent = document.createEvent('MouseEvents');
+                        linkEvent.initEvent('click', true, true);
+                        link.dispatchEvent(linkEvent);
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+    });" );
+    }
     
+    echo Html::a('',['our-life/view-photo','page'=>$pagination->getPage()+1],['id'=>'escapeHref']);
+    $this->registerJs("
+        $('#w2').on('hidden.bs.modal',function (e) {
+  var link = $('#escapeHref')[0];
+  var linkEvent = document.createEvent('MouseEvents');
+  linkEvent.initEvent('click', true, true);
+  link.dispatchEvent(linkEvent);
+  e.preventDefault();
+    });
+
+
+    ");
+    
+
+    
+
+?>   
 <?php
 $iter=1;
 echo "<table class=\"grid\">";
@@ -60,7 +169,7 @@ $slick= Slick::widget([
         // settings for js plugin
         // @see http://kenwheeler.github.io/slick/#settings
         'clientOptions' => [
-            'infinite'=>false,
+            'infinite'=>true,
             'fade'=> true,
             'centerMode'=>true,
             'cssEase'=> 'linear',
@@ -68,6 +177,7 @@ $slick= Slick::widget([
             'variableWidth'=>false,
             'initialSlide'=>$index,
             'useCSS'=>false,
+           // 'onBeforeChange'=>new JsExpression('function(event, slick, currentSlide, nextSlide) { alert(123333) }'),
             // note, that for params passing function you should use JsExpression object
             ],
  
@@ -86,14 +196,15 @@ $slick= Slick::widget([
 
     
 
-
   echo $slick; 
 
 yii\bootstrap\Modal::end();
-    //Pjax::end();
+    
 
 ?>
 
 
 </div>
-
+<?php
+Pjax::end();
+?>
