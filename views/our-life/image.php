@@ -8,6 +8,17 @@ use yii\web\JsExpression;
 
 /* @var $this yii\web\View */
 $this->title = 'Наш склад счастья';
+Pjax::begin(['id'=>'myPjax']);
+$numb=0;
+foreach ($image as $item){ 
+    echo Html::a('123',['our-life/view-photo','href'=>$modelFirst[0]->href,'page'=>($pagination->getPage()==0)?1:$pagination->getPage()+1,'href'=>$item->href],['id'=>'href'.$numb]);   
+    $numb+=1;
+}
+
+    
+Pjax::end();
+
+
 Pjax::begin(['id'=>'myPjax']); 
 $items=[];
 $itemsThumb=[];
@@ -26,17 +37,16 @@ foreach ($image as $item){
  
     
 <?= LinkPager::widget(['pagination'=>$pagination]) ?>
-<?php $link=$pagination->getLinks(); echo var_dump($link);
+<?php $link=$pagination->getLinks(); 
     if (!isset($link['next'])){
-        echo Html::a('',['our-life/view-photo','href'=>$modelPrev[0]->href,'page'=>$pagination->getPage()-1],['id'=>'prevPage']);
+        echo Html::a('',['our-life/view-photo','href'=>$modelPrev[0]->href,'page'=>$pagination->getPage()],['id'=>'prevPage']);
         echo Html::a('',['our-life/view-photo','href'=>$modelFirst[0]->href,'page'=>1],['id'=>'firstPage']);
                 $this->registerJs("
                 jQuery(document).ready(function () {
                 $('#w0').on('beforeChange',function(event, slick, currentSlide, nextSlide) {
-                alert(\"Событие последней кнопки\");
                     if ((currentSlide==".($countQuery%$pagination->limit-1).")&&(nextSlide==0)){                     
                         $('.modal-backdrop').remove();
-                        $('#w2').modal('hide');
+                        $('#w1').modal('hide');
                         var link = $('#firstPage')[0];
                         var linkEvent = document.createEvent('MouseEvents');
                         
@@ -46,7 +56,7 @@ foreach ($image as $item){
                         return false;
                     } else if ((currentSlide==0)&&(nextSlide==".($countQuery%$pagination->limit-1).")) {
                         $('.modal-backdrop').remove();
-                        $('#w2').modal('hide');
+                        $('#w1').modal('hide');
                         var link = $('#prevPage')[0];
                         var linkEvent = document.createEvent('MouseEvents');
                         
@@ -65,10 +75,9 @@ foreach ($image as $item){
                 $this->registerJs("
                 jQuery(document).ready(function () {
                 $('#w0').on('beforeChange',function(event, slick, currentSlide, nextSlide) {
-                alert(\"Событие первой кнопки\");
                 if ((currentSlide==0)&&(nextSlide==".($pagination->limit-1).")){
                     $('.modal-backdrop').remove();
-                    $('#w2').modal('hide');
+                    $('#w1').modal('hide');
                         var link = $('#lastPage')[0];
                         var linkEvent = document.createEvent('MouseEvents');
                         linkEvent.initEvent('click', true, true);
@@ -77,7 +86,7 @@ foreach ($image as $item){
                         return false;
                     } else if ((currentSlide==".($pagination->limit-1).")&&(nextSlide==0)){
                     $('.modal-backdrop').remove();
-                    $('#w2').modal('hide');
+                    $('#w1').modal('hide');
                         var link = $('#nextPage')[0];
                         var linkEvent = document.createEvent('MouseEvents');
                         linkEvent.initEvent('click', true, true);
@@ -89,38 +98,44 @@ foreach ($image as $item){
     });" );       
     }
     if ((isset($link['prev']))&&(isset($link['next']))) {
-        echo Html::a('',['our-life/view-photo','href'=>$modelNext[0]->href,'page'=>$pagination->getPage()+1],['id'=>'nextPage']);
-        echo Html::a('',['our-life/view-photo','href'=>$modelLast[0]->href,'page'=>$pagination->getPage()-1],['id'=>'prevPage']);
+        echo Html::a('',['our-life/view-photo','href'=>$modelNext[0]->href,'page'=>$pagination->getPage()+2],['id'=>'nextPage']);
+        echo Html::a('',['our-life/view-photo','href'=>$modelPrev[0]->href,'page'=>$pagination->getPage()],['id'=>'prevPage']);
         $this->registerJs("
                 jQuery(document).ready(function () {
                 $('#w0').on('beforeChange',function(event, slick, currentSlide, nextSlide) {
-                alert(\"Событие средних кнопок\");
-                if ((currentSlide==0)&&(nextSlide==".($countQuery%$pagination->limit-1).")){
+                if ((currentSlide==0)&&(nextSlide==".($pagination->limit-1).")){
                     $('.modal-backdrop').remove();
-                    $('#w2').modal('hide');
+                    $('#w1').modal('hide');
                         var link = $('#prevPage')[0];
                         var linkEvent = document.createEvent('MouseEvents');
                         linkEvent.initEvent('click', true, true);
                         link.dispatchEvent(linkEvent);
                         e.preventDefault();
                         return false;
-                    } else if ((currentSlide==".($countQuery%$pagination->limit-1).")&&(nextSlide==0)){
+                } else if ((currentSlide==".($pagination->limit-1).")&&(nextSlide==0)){
                     $('.modal-backdrop').remove();
-                    $('#w2').modal('hide');
+                    $('#w1').modal('hide');
                         var link = $('#nextPage')[0];
                         var linkEvent = document.createEvent('MouseEvents');
                         linkEvent.initEvent('click', true, true);
                         link.dispatchEvent(linkEvent);
                         e.preventDefault();
                         return false;
-                    }
+                    } else {
+                        var link = $('#href'+nextSlide.toString())[0];
+                        alert(link);
+                        var linkEvent = document.createEvent('MouseEvents');
+                        linkEvent.initEvent('click', true, true);
+                        link.dispatchEvent(linkEvent);
+                        return true;                   
+                }
                 });
     });" );
     }
     
     echo Html::a('',['our-life/view-photo','page'=>$pagination->getPage()+1],['id'=>'escapeHref']);
     $this->registerJs("
-        $('#w2').on('hidden.bs.modal',function (e) {
+        $('#w1').on('hidden.bs.modal',function (e) {
   var link = $('#escapeHref')[0];
   var linkEvent = document.createEvent('MouseEvents');
   linkEvent.initEvent('click', true, true);

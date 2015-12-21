@@ -29,7 +29,7 @@ class OurLifeController extends Controller {
                     ->limit($pagination->limit)
                     ->all();
             $modelNext=$query->orderBy("id")
-                    ->offset($pagination->limit)
+                    ->offset($pagination->offset+$pagination->limit)
                     ->limit(1)
                     ->all();
             $modelPrev=$query->orderBy("id")
