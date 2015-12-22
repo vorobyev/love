@@ -8,13 +8,32 @@ use yii\web\JsExpression;
 
 /* @var $this yii\web\View */
 $this->title = 'Наш склад счастья';
-Pjax::begin(['id'=>'myPjax']);
+
+$iter=1;
+foreach ($image as $item){
+    echo "<div class=\"notShowHref\" id='metaHref".(string)$iter."'><br/>"
+        . Html::a('Оригинал',"image/".$item->name)."</div>";
+    $iter+=1;
+}
+Pjax::begin(['id'=>'myInnerPhoto']);
 $numb=0;
 foreach ($image as $item){ 
-    echo Html::a('123',['our-life/view-photo','href'=>$modelFirst[0]->href,'page'=>($pagination->getPage()==0)?1:$pagination->getPage()+1,'href'=>$item->href],['id'=>'href'.$numb]);   
+    echo Html::a('',['our-life/view-photo','href'=>$modelFirst[0]->href,'page'=>($pagination->getPage()==0)?1:$pagination->getPage()+1,'href'=>$item->href],['id'=>'href'.$numb]);   
     $numb+=1;
 }
 
+$this->registerJs("
+function dump(obj) {
+    var out = \"\";
+    if(obj && typeof(obj) == \"object\"){
+        for (var i in obj) {
+            out += i + \": \" + obj[i] + \" \";
+        }
+    } else {
+        out = obj;
+    }
+    alert(out);
+}");
     
 Pjax::end();
 
@@ -27,6 +46,7 @@ foreach ($image as $item){
 }
 foreach ($image as $item){
     $items=array_merge($items,['<img src="image/medium/'.$item->name.'">']);
+    
 }
 
 //$items=['<img src="image/thumbnail/'.$image[0]->name.'">'];
@@ -64,7 +84,20 @@ foreach ($image as $item){
                         link.dispatchEvent(linkEvent);
                         e.preventDefault();
                         return false;                       
-                    }
+                    }else {
+                        var link = $('#href'+nextSlide.toString())[0];
+                        var linkEvent = document.createEvent('MouseEvents');
+                        linkEvent.initEvent('click', true, true);
+                        link.dispatchEvent(linkEvent);
+                        return true;                   
+                }
+                });
+                $('#w0').on('afterChange',function(event, slick,currentSlide){
+                    var link = $('.slick-active')[0];
+                    link.focus();
+                    $('#exifInfo').html($('#meta'+(currentSlide+1).toString()).html());
+                    $('#imageInfo').html($('#metaInfo'+(currentSlide+1).toString()).html());
+                    return true;
                 });
                 });"                  
                 );        
@@ -93,7 +126,20 @@ foreach ($image as $item){
                         link.dispatchEvent(linkEvent);
                         e.preventDefault();
                         return false;
-                    }
+                    }else {
+                        var link = $('#href'+nextSlide.toString())[0];
+                        var linkEvent = document.createEvent('MouseEvents');
+                        linkEvent.initEvent('click', true, true);
+                        link.dispatchEvent(linkEvent);
+                        return true;                   
+                }
+                });
+                $('#w0').on('afterChange',function(event, slick,currentSlide){
+                    var link = $('.slick-active')[0];
+                    link.focus();
+                $('#exifInfo').html($('#meta'+(currentSlide+1).toString()).html());
+                $('#imageInfo').html($('#metaInfo'+(currentSlide+1).toString()).html());
+                    return true;
                 });
     });" );       
     }
@@ -123,12 +169,18 @@ foreach ($image as $item){
                         return false;
                     } else {
                         var link = $('#href'+nextSlide.toString())[0];
-                        alert(link);
                         var linkEvent = document.createEvent('MouseEvents');
                         linkEvent.initEvent('click', true, true);
                         link.dispatchEvent(linkEvent);
                         return true;                   
                 }
+                });
+                $('#w0').on('afterChange',function(event, slick,currentSlide){
+                    var link = $('.slick-active')[0];
+                    link.focus();
+                    $('#exifInfo').html($('#meta'+(currentSlide+1).toString()).html());
+                    $('#imageInfo').html($('#metaInfo'+(currentSlide+1).toString()).html());                   
+                    return true;
                 });
     });" );
     }
@@ -142,8 +194,12 @@ foreach ($image as $item){
   link.dispatchEvent(linkEvent);
   e.preventDefault();
     });
-
-
+                   
+        $('#w1').on('shown.bs.modal',function (e) {
+            var link = $('.slick-active')[0];
+            link.focus();
+            return true;
+    });
     ");
     
 
@@ -167,6 +223,17 @@ foreach ($itemsThumb as $item){
 }
 echo "</table>";
 
+$iter=1;
+foreach ($image as $item){
+    echo "<div class=\"notShowExif\" id='meta".(string)$iter."'><br/><span class=\"exifMeta\">Дата снимка: <br/></span><span class=\"exifValue\">".(isset($item->time)? $item->time:"Не определено")."</span><br/>"
+            . "<span class=\"exifMeta\">Устройство: <br/></span><span class=\"exifValue\">".(isset($item->device)? $item->device:"Не определено")."</span><br/>"
+            . "<span class=\"exifMeta\">Размер: <br/></span><span class=\"exifValue\">".(isset($item->size)? $item->size:"Не определено")."</span></div>";
+    echo "<div class=\"notShowInfo\" id='metaInfo".(string)$iter."'><br/>"
+            . "<span class=\"metaInfo\">Название: <br/></span><span class=\"valueInfo\">".(isset($item->fullName)? $item->fullName:"Не определено")."</span><br/>"
+            . "<span class=\"metaInfo\">Описание: <br/></span><span class=\"valueInfo\">".(isset($item->descr)? $item->descr:"Не определено")."</span></div>";
+
+    $iter+=1; 
+}
 $slick= Slick::widget([
  
         // HTML tag for container. Div is default.
@@ -179,11 +246,12 @@ $slick= Slick::widget([
         'items' => $items,
  
         // HTML attribute for every carousel item
-        'itemOptions' => ['style' => 'border:1px'],
+        'itemOptions' => ['style' => 'border:0px'],
  
         // settings for js plugin
         // @see http://kenwheeler.github.io/slick/#settings
         'clientOptions' => [
+            'autoplay'=>false,
             'infinite'=>true,
             'fade'=> true,
             'centerMode'=>true,
@@ -192,6 +260,7 @@ $slick= Slick::widget([
             'variableWidth'=>false,
             'initialSlide'=>$index,
             'useCSS'=>false,
+            'focusOnSelect'=>true
            // 'onBeforeChange'=>new JsExpression('function(event, slick, currentSlide, nextSlide) { alert(123333) }'),
             // note, that for params passing function you should use JsExpression object
             ],
@@ -200,7 +269,7 @@ $slick= Slick::widget([
     ]);  
 
       yii\bootstrap\Modal::begin([
-    'header' => "Просмотр",
+    'header' => "<h3 align=\"center\">Просмотр фотографий</h3>",
     'clientOptions'=> ($href=="") ? ['show'=>false] : ['show'=>true]
     ]); 
 
@@ -212,9 +281,19 @@ $slick= Slick::widget([
     
 
   echo $slick; 
-
+  echo "<hr id=\"hrMy\" color=\"red\" align=\"center\" size:\"10px\">";
+  echo "<div id=\"footerImage\"><div id=\"exifInfo\"></div>";
+  echo "<div id=\"imageInfo\"></div></div>";
 yii\bootstrap\Modal::end();
-    
+if (isset($href)) {
+    $this->registerJs("
+     jQuery(document).ready(function () {    
+        $('#exifInfo').html($('#meta".($index+1)."').html());
+        $('#imageInfo').html($('#metaInfo".($index+1)."').html());
+});
+
+");
+}    
 
 ?>
 

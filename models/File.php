@@ -13,16 +13,65 @@ class File Extends ActiveRecord {
         return "photos";
     }
     
+    public function filesize_get($filesize) 
+    { 
+  
+       // Если размер переданного в функцию файла больше 1кб 
+        if($filesize > 1024) 
+        { 
+           $filesize = ($filesize/1024); 
+           // если размер файла больше одного килобайта 
+           // пересчитываем в мегабайтах 
+           if($filesize > 1024) 
+           { 
+                $filesize = ($filesize/1024); 
+               // если размер файла больше одного мегабайта 
+               // пересчитываем в гигабайтах 
+               if($filesize > 1024) 
+               { 
+                   $filesize = ($filesize/1024); 
+                   $filesize = round($filesize, 1); 
+                   return $filesize." GB";    
+
+               } 
+               else 
+               { 
+                   $filesize = round($filesize, 1); 
+                   return $filesize." MB";    
+               }   
+
+           } 
+           else 
+           { 
+               $filesize = round($filesize, 1); 
+               return $filesize." KB";    
+           } 
+
+       } 
+       else 
+       { 
+           $filesize = round($filesize, 1); 
+           return $filesize." Bytes";    
+       } 
+
+    } 
+    
     public function save($runValidation = false, $attributeNames = NULL, $name=NULL)//тут ошибки
     {
         if (gettype($attributeNames)=="array"){
-            $this->name=$name;
-            $this->time =(isset($attributeNames["DateTime"])) ? date("Y-m-d H:i:s", strtotime($attributeNames['DateTime'])):date ("Y-m-d H:i:s", filemtime($attributeNames["path"]));
-
+            $this->device =(isset($attributeNames["Model"])) ? $attributeNames["Model"]:"";
+            $this->size =(isset($attributeNames["FileSize"])) ? $this->filesize_get((int)$attributeNames["FileSize"]):"";
+            $this->time =(isset($attributeNames["DateTime"])) ? date("Y-m-d H:i:s", strtotime($attributeNames['DateTime'])):"";
+            //$this->timeBegin = date ("Y-m-d H:i:s", filemtime($attributeNames["path"]));
+            $this->timeBegin =(isset($attributeNames["FileDateTime"])) ? date ("Y-m-d H:i:s",$attributeNames["FileDateTime"]):"";
+            
         } else {
-            $this->name=$name;
-            $this->time=date ("Y-m-d H:i:s", filemtime($attributeNames));
+            $this->device = "";
+            $this->size = ""; 
+            $this->time="";
+            $this->timeBegin="";
         }
+        $this->name=$name;
         $this->href=$this->generateStr($this->name."cxfcnmt",2);//счастье
         $this->access=0;
         $this->uploadTime=date("Y-m-d H:i:s");
