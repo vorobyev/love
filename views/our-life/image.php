@@ -12,13 +12,13 @@ $this->title = 'Наш склад счастья';
 $iter=1;
 foreach ($image as $item){
     echo "<div class=\"notShowHref\" id='metaHref".(string)$iter."'><br/>"
-        . Html::a('Оригинал',"image/".$item->name)."</div>";
+        . Html::a('Оригинал',"image/".$item->name,['target'=>"_blank",'class'=>'notPjax'])."</div>";
     $iter+=1;
 }
-Pjax::begin(['id'=>'myInnerPhoto']);
+Pjax::begin(['id'=>'myInnerPhoto','linkSelector'=>'.pjaxMy']);
 $numb=0;
 foreach ($image as $item){ 
-    echo Html::a('',['our-life/view-photo','href'=>$modelFirst[0]->href,'page'=>($pagination->getPage()==0)?1:$pagination->getPage()+1,'href'=>$item->href],['id'=>'href'.$numb]);   
+    echo Html::a('',['our-life/view-photo','href'=>$modelFirst[0]->href,'page'=>($pagination->getPage()==0)?1:$pagination->getPage()+1,'href'=>$item->href],['id'=>'href'.$numb,'class'=>'pjaxMy']);   
     $numb+=1;
 }
 
@@ -282,13 +282,14 @@ $slick= Slick::widget([
 
   echo $slick; 
   echo "<hr id=\"hrMy\" color=\"red\" align=\"center\" size:\"10px\">";
-  echo "<div id=\"footerImage\"><div id=\"exifInfo\"></div>";
+  echo "<div id=\"footerImage\"><div id=\"exifInfo\" ></div>";
   echo "<div id=\"imageInfo\"></div></div>";
 yii\bootstrap\Modal::end();
 if (isset($href)) {
     $this->registerJs("
      jQuery(document).ready(function () {    
-        $('#exifInfo').html($('#meta".($index+1)."').html());
+        $('#exifInfo').html($('#meta".($index+1)."').html()+$('#metaHref".($index+1)."').html());
+            
         $('#imageInfo').html($('#metaInfo".($index+1)."').html());
 });
 
