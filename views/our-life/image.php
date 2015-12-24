@@ -12,9 +12,11 @@ $this->title = 'Наш склад счастья';
 $iter=1;
 foreach ($image as $item){
     echo "<div class=\"notShowHref\" id='metaHref".(string)$iter."'><br/>"
-        . Html::a('Оригинал',"image/".$item->name,['target'=>"_blank",'class'=>'notPjax'])."</div>";
+        //. Html::a('Оригинал',"image/".$item->name,['target'=>"_blank",'class'=>'notPjax','id'=>'hrefBlank'.(string)$iter])."</div>";
+        . Html::a('Оригинал',['our-life/view-photo','href'=>$item->href,'showOriginal'=>1],['target'=>"_blank",'class'=>'notPjax','id'=>'hrefBlank'.(string)$iter])."</div>";
     $iter+=1;
 }
+
 Pjax::begin(['id'=>'myInnerPhoto','linkSelector'=>'.pjaxMy']);
 $numb=0;
 foreach ($image as $item){ 
@@ -95,7 +97,7 @@ foreach ($image as $item){
                 $('#w0').on('afterChange',function(event, slick,currentSlide){
                     var link = $('.slick-active')[0];
                     link.focus();
-                    $('#exifInfo').html($('#meta'+(currentSlide+1).toString()).html());
+                    $('#exifInfo').html($('#meta'+(currentSlide+1).toString()).html()+$('#metaHref'+(currentSlide+1).toString()).html());
                     $('#imageInfo').html($('#metaInfo'+(currentSlide+1).toString()).html());
                     return true;
                 });
@@ -137,7 +139,7 @@ foreach ($image as $item){
                 $('#w0').on('afterChange',function(event, slick,currentSlide){
                     var link = $('.slick-active')[0];
                     link.focus();
-                $('#exifInfo').html($('#meta'+(currentSlide+1).toString()).html());
+                $('#exifInfo').html($('#meta'+(currentSlide+1).toString()).html()+$('#metaHref'+(currentSlide+1).toString()).html());
                 $('#imageInfo').html($('#metaInfo'+(currentSlide+1).toString()).html());
                     return true;
                 });
@@ -178,7 +180,7 @@ foreach ($image as $item){
                 $('#w0').on('afterChange',function(event, slick,currentSlide){
                     var link = $('.slick-active')[0];
                     link.focus();
-                    $('#exifInfo').html($('#meta'+(currentSlide+1).toString()).html());
+                    $('#exifInfo').html($('#meta'+(currentSlide+1).toString()).html()+$('#metaHref'+(currentSlide+1).toString()).html());
                     $('#imageInfo').html($('#metaInfo'+(currentSlide+1).toString()).html());                   
                     return true;
                 });
@@ -291,6 +293,7 @@ if (isset($href)) {
         $('#exifInfo').html($('#meta".($index+1)."').html()+$('#metaHref".($index+1)."').html());
             
         $('#imageInfo').html($('#metaInfo".($index+1)."').html());
+            
 });
 
 ");
@@ -302,4 +305,5 @@ if (isset($href)) {
 </div>
 <?php
 Pjax::end();
+
 ?>

@@ -7,6 +7,7 @@ use yii\web\Controller;
 use app\models\User;
 use app\models\File;
 use yii\data\Pagination;
+use yii\helpers\Url;
 
 class OurLifeController extends Controller {
     
@@ -18,11 +19,18 @@ class OurLifeController extends Controller {
         } else {
             $href=Yii::$app->request->get('href');
             $file=new File();
+            $image1=File::find()->where(['href'=>$href])->one();
+            $showOriginal=Yii::$app->request->get('showOriginal');
+            if (isset($showOriginal)){  
+               return $this->redirect("image/".$image1->name); 
+            }
+            
+
             $query=File::find();
             $pagination=new Pagination([
-                'defaultPageSize'=>18,
+                'defaultPageSize'=>81,
                 'totalCount'=>$query->count(),
-                'pageSizeLimit' => [1, 18]
+                'pageSizeLimit' => [1, 81]
             ]);
             $model=$query->orderBy("id")
                     ->offset($pagination->offset)
@@ -51,17 +59,47 @@ class OurLifeController extends Controller {
                 }
                 $index+=1;
             }
-            return $this->render('image',[
-                'modelPrev'=>$modelPrev,
-                'modelFirst'=>$modelFirst,
-                'countQuery'=>$query->count(),
-                'modelLast'=>$modelLast,
-                'modelNext'=>$modelNext,
-                'index'=>$index,
-                'href'=>$href,
-                'image'=>$model,
-                'pagination'=>$pagination
-                ]);
+            $edit=Yii::$app->request->get('edit');
+            if (isset($edit)) {
+                if (isset($href)){
+                    $imageEdit1=new File();
+                    $imageEdit=$imageEdit1->find()->where(['href'=>$href])->one();
+                    $logB=Yii::$app->request->post("login-button");
+                     if (isset($logB)){
+                         $File=Yii::$app->request->post("File");
+                        $descr=$File["descr"];
+                        $fullName=$File["fullName"];
+                        $post=Yii::$app->request->post();
+                   
+                        $imageEdit->descr=$descr;
+                        $imageEdit->fullName=$fullName;
+                        $imageEdit->save(false,"standart");
+                    }
+               
+                } else {
+                        $imageEdit="";
+                    }
+                return $this->render('imageEdit',[
+                    'imageEdit'=>$imageEdit,
+                    'countQuery'=>$query->count(),
+                    'index'=>$index,
+                    'href'=>$href,
+                    'image'=>$model,
+                    'pagination'=>$pagination
+                    ]);
+            } else {
+                return $this->render('image',[
+                    'modelPrev'=>$modelPrev,
+                    'modelFirst'=>$modelFirst,
+                    'countQuery'=>$query->count(),
+                    'modelLast'=>$modelLast,
+                    'modelNext'=>$modelNext,
+                    'index'=>$index,
+                    'href'=>$href,
+                    'image'=>$model,
+                    'pagination'=>$pagination
+                    ]);              
+            }
         }
         
     }

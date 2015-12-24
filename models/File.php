@@ -56,8 +56,9 @@ class File Extends ActiveRecord {
 
     } 
     
-    public function save($runValidation = false, $attributeNames = NULL, $name=NULL)//тут ошибки
-    {
+    public function save($runValidation = false, $attributeNames = NULL, $name=NULL, $size=NULL)//тут ошибки
+    { 
+        if ($attributeNames!=="standart"){
         if (gettype($attributeNames)=="array"){
             $this->device =(isset($attributeNames["Model"])) ? $attributeNames["Model"]:"";
             $this->size =(isset($attributeNames["FileSize"])) ? $this->filesize_get((int)$attributeNames["FileSize"]):"";
@@ -72,10 +73,13 @@ class File Extends ActiveRecord {
             $this->timeBegin="";
         }
         $this->name=$name;
-        $this->href=$this->generateStr($this->name."cxfcnmt",2);//счастье
+        $this->href=$this->generateStr($this->name.(string)$size."cxfcnmt",2);//счастье
         $this->access=0;
         $this->uploadTime=date("Y-m-d H:i:s");
         return parent::save($runValidation);
+        } else {
+           return parent::save($runValidation); 
+        }
     }
    
     private function generateStr($value,$key) 
@@ -123,7 +127,7 @@ class File Extends ActiveRecord {
         $ext = end((explode(".", $image->name)));
 
         // generate a unique file name
-        $this->profile_pic = $this->generateStr($image->name."elfxf",1).".{$ext}";//удача
+        $this->profile_pic = $this->generateStr($image->name.(string)$image->size."elfxf",1).".{$ext}";//удача
 
         // the uploaded profile picture instance
         return $image;

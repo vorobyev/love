@@ -147,13 +147,13 @@ class FilesController extends Controller{
                     $exif = exif_read_data("/var/www/html/basic/web/".$kk, 'IFD0');
                     if ($exif!==false) {
                         $exif["path"]=$path;
-                        $model->save(false,$exif,$model->profile_pic);
+                        $model->save(false,$exif,$model->profile_pic,$image->size);
                     } else {
-                        $model->save(false,$path,$model->profile_pic);
+                        $model->save(false,$path,$model->profile_pic,$image->size);
                     }
                 }
                 catch (Exception $e) {
-                    $model->save(false,$path,$model->profile_pic);
+                    $model->save(false,$path,$model->profile_pic,$image->size);
                 }
                 $kkk=$model->getProfilePictureUrl("medium/");
                 $kkkk=$model->getProfilePictureUrl("thumbnail/");
