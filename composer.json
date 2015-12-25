@@ -21,7 +21,8 @@
         "2amigos/yii2-file-upload-widget":"~1.0",
 	"bupy7/yii2-flexslider": "dev-master",
 	"evgeniyrru/yii2-slick": "*",
-	"2amigos/yiifoundation" : "*"
+	"2amigos/yiifoundation" : "*",
+	"hosannahighertech/yii2-audiojs": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",
