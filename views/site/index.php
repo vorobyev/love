@@ -4,27 +4,9 @@ use dosamigos\fileupload\FileUploadUI;
 $this->title = 'Наш склад счастья';
 ?>
 <div class="site-index">
-
-<?= FileUploadUI::widget([
-        'model' => $model,
-        'attribute' => 'profile_pic',
-        'url' => ['files/add'],
-         'gallery' => true,
-         'fieldOptions' => [
-             'accept' => 'image/*',
-         ],
-         'clientOptions' => [  
-             'maxFileSize' => 10000000
-          ],
-          'clientEvents' => [
-              'fileuploaddone' => 'function(e, data) {
-                                      jQuery(".fb-image-profile").attr("src",data.result);
-                                  }',
-              'fileuploadfail' => 'function(e, data) {
-                                      
-                                  }',
-          ],
-]);
-?>
-  
+<br/>
+<div class="content-index">Сайт Воробьева Михаила и Литовкиной Натальи! </div>
+ <div class="content-index">Содержит немного событий из нашей жизни.</div>
+  <img src="imageSite/snowmens.jpg"/>
+<div class="left-index"><img src="imageSite/2.png"/></div>
 </div>

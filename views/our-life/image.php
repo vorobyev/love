@@ -7,15 +7,10 @@ use yii\helpers\Html;
 use yii\web\JsExpression;
 
 /* @var $this yii\web\View */
-$this->title = 'Наш склад счастья';
+$this->title = 'Фотографии';
+$this->params['breadcrumbs'][] = $this->title;
 
-$iter=1;
-foreach ($image as $item){
-    echo "<div class=\"notShowHref\" id='metaHref".(string)$iter."'><br/>"
-        //. Html::a('Оригинал',"image/".$item->name,['target'=>"_blank",'class'=>'notPjax','id'=>'hrefBlank'.(string)$iter])."</div>";
-        . Html::a('Оригинал',['our-life/view-photo','href'=>$item->href,'showOriginal'=>1],['target'=>"_blank",'class'=>'notPjax','id'=>'hrefBlank'.(string)$iter])."</div>";
-    $iter+=1;
-}
+
 
 Pjax::begin(['id'=>'myInnerPhoto','linkSelector'=>'.pjaxMy']);
 $numb=0;
@@ -23,6 +18,8 @@ foreach ($image as $item){
     echo Html::a('',['our-life/view-photo','href'=>$modelFirst[0]->href,'page'=>($pagination->getPage()==0)?1:$pagination->getPage()+1,'href'=>$item->href],['id'=>'href'.$numb,'class'=>'pjaxMy']);   
     $numb+=1;
 }
+
+
 
 $this->registerJs("
 function dump(obj) {
@@ -35,12 +32,22 @@ function dump(obj) {
         out = obj;
     }
     alert(out);
-}");
+}
+");
     
 Pjax::end();
 
 
 Pjax::begin(['id'=>'myPjax']); 
+$iter=1;
+foreach ($image as $item){
+    echo "<div class=\"notShowHref\" id='metaHref".(string)$iter."'><br/>"
+        //. Html::a('Оригинал',"image/".$item->name,['target'=>"_blank",'class'=>'notPjax','id'=>'hrefBlank'.(string)$iter])."</div>";
+        . Html::a('Оригинал',['our-life/view-photo','href'=>$item->href,'showOriginal'=>1],['target'=>"_blank",'class'=>'notPjax','id'=>'hrefBlank'.(string)$iter])."</div>";
+    $iter+=1;
+}
+
+
 $items=[];
 $itemsThumb=[];
 foreach ($image as $item){
@@ -58,17 +65,17 @@ foreach ($image as $item){
      
  
     
-<?= LinkPager::widget(['pagination'=>$pagination]) ?>
+<?="<div style='text-align:center'>". LinkPager::widget(['pagination'=>$pagination])."</div>" ?>
 <?php $link=$pagination->getLinks(); 
     if (!isset($link['next'])){
         echo Html::a('',['our-life/view-photo','href'=>$modelPrev[0]->href,'page'=>$pagination->getPage()],['id'=>'prevPage']);
         echo Html::a('',['our-life/view-photo','href'=>$modelFirst[0]->href,'page'=>1],['id'=>'firstPage']);
                 $this->registerJs("
                 jQuery(document).ready(function () {
-                $('#w0').on('beforeChange',function(event, slick, currentSlide, nextSlide) {
+                $('#slickMy').on('beforeChange',function(event, slick, currentSlide, nextSlide) {
                     if ((currentSlide==".($countQuery%$pagination->limit-1).")&&(nextSlide==0)){                     
                         $('.modal-backdrop').remove();
-                        $('#w1').modal('hide');
+                        $('#modalMy').modal('hide');
                         var link = $('#firstPage')[0];
                         var linkEvent = document.createEvent('MouseEvents');
                         
@@ -78,7 +85,7 @@ foreach ($image as $item){
                         return false;
                     } else if ((currentSlide==0)&&(nextSlide==".($countQuery%$pagination->limit-1).")) {
                         $('.modal-backdrop').remove();
-                        $('#w1').modal('hide');
+                        $('#modalMy').modal('hide');
                         var link = $('#prevPage')[0];
                         var linkEvent = document.createEvent('MouseEvents');
                         
@@ -94,7 +101,7 @@ foreach ($image as $item){
                         return true;                   
                 }
                 });
-                $('#w0').on('afterChange',function(event, slick,currentSlide){
+                $('#slickMy').on('afterChange',function(event, slick,currentSlide){
                     var link = $('.slick-active')[0];
                     link.focus();
                     $('#exifInfo').html($('#meta'+(currentSlide+1).toString()).html()+$('#metaHref'+(currentSlide+1).toString()).html());
@@ -109,10 +116,10 @@ foreach ($image as $item){
          echo Html::a('',['our-life/view-photo','href'=>$modelNext[0]->href,'page'=>$pagination->getPage()+2],['id'=>'nextPage']);
                 $this->registerJs("
                 jQuery(document).ready(function () {
-                $('#w0').on('beforeChange',function(event, slick, currentSlide, nextSlide) {
+                $('#slickMy').on('beforeChange',function(event, slick, currentSlide, nextSlide) {
                 if ((currentSlide==0)&&(nextSlide==".($pagination->limit-1).")){
                     $('.modal-backdrop').remove();
-                    $('#w1').modal('hide');
+                    $('#modalMy').modal('hide');
                         var link = $('#lastPage')[0];
                         var linkEvent = document.createEvent('MouseEvents');
                         linkEvent.initEvent('click', true, true);
@@ -121,7 +128,7 @@ foreach ($image as $item){
                         return false;
                     } else if ((currentSlide==".($pagination->limit-1).")&&(nextSlide==0)){
                     $('.modal-backdrop').remove();
-                    $('#w1').modal('hide');
+                    $('#modalMy').modal('hide');
                         var link = $('#nextPage')[0];
                         var linkEvent = document.createEvent('MouseEvents');
                         linkEvent.initEvent('click', true, true);
@@ -136,7 +143,7 @@ foreach ($image as $item){
                         return true;                   
                 }
                 });
-                $('#w0').on('afterChange',function(event, slick,currentSlide){
+                $('#slickMy').on('afterChange',function(event, slick,currentSlide){
                     var link = $('.slick-active')[0];
                     link.focus();
                 $('#exifInfo').html($('#meta'+(currentSlide+1).toString()).html()+$('#metaHref'+(currentSlide+1).toString()).html());
@@ -150,10 +157,10 @@ foreach ($image as $item){
         echo Html::a('',['our-life/view-photo','href'=>$modelPrev[0]->href,'page'=>$pagination->getPage()],['id'=>'prevPage']);
         $this->registerJs("
                 jQuery(document).ready(function () {
-                $('#w0').on('beforeChange',function(event, slick, currentSlide, nextSlide) {
+                $('#slickMy').on('beforeChange',function(event, slick, currentSlide, nextSlide) {
                 if ((currentSlide==0)&&(nextSlide==".($pagination->limit-1).")){
                     $('.modal-backdrop').remove();
-                    $('#w1').modal('hide');
+                    $('#modalMy').modal('hide');
                         var link = $('#prevPage')[0];
                         var linkEvent = document.createEvent('MouseEvents');
                         linkEvent.initEvent('click', true, true);
@@ -162,7 +169,7 @@ foreach ($image as $item){
                         return false;
                 } else if ((currentSlide==".($pagination->limit-1).")&&(nextSlide==0)){
                     $('.modal-backdrop').remove();
-                    $('#w1').modal('hide');
+                    $('#modalMy').modal('hide');
                         var link = $('#nextPage')[0];
                         var linkEvent = document.createEvent('MouseEvents');
                         linkEvent.initEvent('click', true, true);
@@ -177,7 +184,7 @@ foreach ($image as $item){
                         return true;                   
                 }
                 });
-                $('#w0').on('afterChange',function(event, slick,currentSlide){
+                $('#slickMy').on('afterChange',function(event, slick,currentSlide){
                     var link = $('.slick-active')[0];
                     link.focus();
                     $('#exifInfo').html($('#meta'+(currentSlide+1).toString()).html()+$('#metaHref'+(currentSlide+1).toString()).html());
@@ -189,7 +196,7 @@ foreach ($image as $item){
     
     echo Html::a('',['our-life/view-photo','page'=>$pagination->getPage()+1],['id'=>'escapeHref']);
     $this->registerJs("
-        $('#w1').on('hidden.bs.modal',function (e) {
+        $('#modalMy').on('hidden.bs.modal',function (e) {
   var link = $('#escapeHref')[0];
   var linkEvent = document.createEvent('MouseEvents');
   linkEvent.initEvent('click', true, true);
@@ -197,7 +204,7 @@ foreach ($image as $item){
   e.preventDefault();
     });
                    
-        $('#w1').on('shown.bs.modal',function (e) {
+        $('#modalMy').on('shown.bs.modal',function (e) {
             var link = $('.slick-active')[0];
             link.focus();
             return true;
@@ -237,7 +244,7 @@ foreach ($image as $item){
     $iter+=1; 
 }
 $slick= Slick::widget([
- 
+        'id'=>'slickMy',
         // HTML tag for container. Div is default.
         'itemContainer' => 'div',
  
@@ -271,6 +278,7 @@ $slick= Slick::widget([
     ]);  
 
       yii\bootstrap\Modal::begin([
+    'id'=>'modalMy',
     'header' => "<h3 align=\"center\">Просмотр фотографий</h3>",
     'clientOptions'=> ($href=="") ? ['show'=>false] : ['show'=>true]
     ]); 

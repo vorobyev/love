@@ -11,6 +11,25 @@ use yii\helpers\Url;
 
 class OurLifeController extends Controller {
     
+    public function actionEvents () {
+        if (Yii::$app->user->isGuest){
+            return $this->redirect('index.php?r=site/login');
+        } else {
+            return $this->render('events',[
+
+                    ]);
+        }
+    }
+    
+    public function actionOther () {
+        if (Yii::$app->user->isGuest){
+            return $this->redirect('index.php?r=site/login');
+        } else {
+            return $this->render('other',[
+
+                    ]);
+        }
+    }
     
     public function actionViewPhoto ()
     {
@@ -21,9 +40,11 @@ class OurLifeController extends Controller {
             $file=new File();
             $image1=File::find()->where(['href'=>$href])->one();
             $showOriginal=Yii::$app->request->get('showOriginal');
+            $happy=Yii::$app->request->get('happyNewYear');
             if (isset($showOriginal)){  
                return $this->redirect("image/".$image1->name); 
             }
+          
             
 
             $query=File::find();
@@ -32,10 +53,17 @@ class OurLifeController extends Controller {
                 'totalCount'=>$query->count(),
                 'pageSizeLimit' => [1, 81]
             ]);
+             if (!isset($happy)){
             $model=$query->orderBy("id")
                     ->offset($pagination->offset)
                     ->limit($pagination->limit)
                     ->all();
+             } else {
+                 $model=$query->where(['effects'=>1])->orderBy("id")
+                    ->offset($pagination->offset)
+                    ->limit($pagination->limit)
+                    ->all();
+             }
             $modelNext=$query->orderBy("id")
                     ->offset($pagination->offset+$pagination->limit)
                     ->limit(1)
@@ -52,6 +80,14 @@ class OurLifeController extends Controller {
                     ->offset(0)
                     ->limit(1)
                     ->all();
+            
+            if (isset($happy)){  
+               return $this->render('imageHappyNewYear',[
+                    'countQuery'=>$query->count(),
+                    'image'=>$model
+                    ]);
+            }  
+            
             $index=0;
             foreach ($model as $value){
                 if ($value->href==$href){
@@ -69,17 +105,22 @@ class OurLifeController extends Controller {
                          $File=Yii::$app->request->post("File");
                         $descr=$File["descr"];
                         $fullName=$File["fullName"];
+                        $effects=$File["effects"];
                         $post=Yii::$app->request->post();
                    
                         $imageEdit->descr=$descr;
                         $imageEdit->fullName=$fullName;
+                        $imageEdit->effects=$effects;
+                        
                         $imageEdit->save(false,"standart");
                     }
                
                 } else {
                         $imageEdit="";
                     }
+                    $modelFile=new File();
                 return $this->render('imageEdit',[
+                    'model'=>$modelFile,
                     'imageEdit'=>$imageEdit,
                     'countQuery'=>$query->count(),
                     'index'=>$index,

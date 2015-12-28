@@ -37,12 +37,12 @@ AppAsset::register($this);
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Фото', 'url' => ['/our-life/view-photo']],
-            ['label' => 'События', 'url' => ['/site/about']],
-            ['label' => 'Всячина', 'url' => ['/site/contact']],
+            ['label' => 'События', 'url' => ['/our-life/events']],
+            ['label' => 'Всячина', 'url' => ['/our-life/other']],
             Yii::$app->user->isGuest ?
                 ['label' => 'Войти', 'url' => ['/site/login']] :
                 [
-                    'label' => 'Logout (' . Yii::$app->user->identity->username . ')',
+                    'label' => 'Выйти (' . Yii::$app->user->identity->username . ')',
                     'url' => ['/site/logout'],
                     'linkOptions' => ['data-method' => 'post']
                 ],
@@ -54,18 +54,22 @@ AppAsset::register($this);
     <div class="container">
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+            'homeLink'=>[
+                'label'=>'Главная',
+                'url'=>'index.php'
+            ]
         ]) ?>
         <?= $content ?>
     </div>
 </div>
 
-<footer class="footer">
+<!--<footer class="footer">
     <div class="container">
         <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
 
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
-</footer>
+</footer>-->
 
 <?php $this->endBody() ?>
 </body>

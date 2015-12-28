@@ -110,6 +110,11 @@ a.desc:after {
     margin:auto;
     width:800px;
 }
+.site-content2{
+    /*border:black solid 1px;*/
+    margin:auto;
+    width:400px;
+}
 
 .slick-track div img {
     display:inline;
@@ -142,7 +147,7 @@ table {
 }
 
 .slick-list {
-    min-height:600px;
+    /*min-height:600px;*/
 }
 
 .notShowExif {
@@ -204,4 +209,20 @@ table {
 #hrMy {
 border-color:#9D80E9;
 border:2px solid #C9B5FE;
+}
+
+.breadcrumb {
+    background-color:#C8D6FF;
+}
+
+.content-index {
+    font-size:20pt;
+    width:800px;
+    color:black;
+}
+.left-index {
+    padding-left:60px;
+    display:inline;
+    position:absolute;
+    float:left;
 }

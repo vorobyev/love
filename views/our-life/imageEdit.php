@@ -7,7 +7,8 @@ use yii\helpers\Html;
 use yii\web\JsExpression;
 
 /* @var $this yii\web\View */
-$this->title = 'Наш склад счастья';
+$this->title = 'Фотографии (редактирование)';
+$this->params['breadcrumbs'][] = $this->title;
 
 $iter=1;
 foreach ($image as $item){
@@ -35,7 +36,8 @@ function dump(obj) {
         out = obj;
     }
     alert(out);
-}");
+}
+");
     
 Pjax::end();
 
@@ -58,7 +60,7 @@ foreach ($image as $item){
      
  
     
-<?= LinkPager::widget(['pagination'=>$pagination]) ?>
+<?= "<div style='text-align:center'>". LinkPager::widget(['pagination'=>$pagination])."</div>" ?>
 
     
 
@@ -85,6 +87,7 @@ echo "</table>";
 
 if (isset($href)){
       yii\bootstrap\Modal::begin([
+    'id'=>'modalMy',
     'header' => "<h3 align=\"center\">Редактирование информации о фотографии</h3>",
     'clientOptions'=> ($href=="") ? ['show'=>false] : ['show'=>true]
     ]); 
@@ -97,15 +100,16 @@ if (isset($href)){
   echo "<hr id=\"hrMy\" color=\"red\" align=\"center\" size:\"10px\">";
   $form = ActiveForm::begin(['layout' => 'horizontal','id' => 'login-form']);
   echo $form->field($imageEdit, 'fullName')->textInput(['value'=>$imageEdit->fullName])->label("Название");        
-  echo $form->field($imageEdit, 'descr')->textarea(['value'=>$imageEdit->descr,'rows'=>4])->label("Описание");       
+  echo $form->field($imageEdit, 'descr')->textarea(['value'=>$imageEdit->descr,'rows'=>4])->label("Описание"); 
+  echo $form->field($imageEdit, 'effects')->textInput(['value'=>$imageEdit->effects])->label("Эффект"); 
   echo "<div style='text-align:center'>".Html::submitButton('Изменить', ['class' => 'btn btn-primary', 'name' => 'login-button'])."</div>" ;         
   ActiveForm::end();         
   yii\bootstrap\Modal::end();
 }
 
-    echo Html::a('',['our-life/view-photo','page'=>$pagination->getPage()+1],['id'=>'escapeHref']);
+    echo Html::a('',['our-life/view-photo','page'=>$pagination->getPage()+1,'edit'=>1],['id'=>'escapeHref']);
     $this->registerJs("
-        $('#w1').on('hidden.bs.modal',function (e) {
+        $('#modalMy').on('hidden.bs.modal',function (e) {
   var link = $('#escapeHref')[0];
   var linkEvent = document.createEvent('MouseEvents');
   linkEvent.initEvent('click', true, true);
@@ -118,7 +122,30 @@ if (isset($href)){
 
 
 </div>
-<?php
-//Pjax::end();
+<div style="text-align:center;">
 
+
+<?= FileUploadUI::widget([
+        'model' => $model,
+        'attribute' => 'profile_pic',
+        'url' => ['files/add'],
+         'gallery' => true,
+         'fieldOptions' => [
+             'accept' => 'image/*',
+         ],
+         'clientOptions' => [  
+             'maxFileSize' => 10000000
+          ],
+          'clientEvents' => [
+              'fileuploaddone' => 'function(e, data) {
+                                      jQuery(".fb-image-profile").attr("src",data.result);
+                                  }',
+              'fileuploadfail' => 'function(e, data) {
+                                      
+                                  }',
+          ],
+]);
 ?>
+</div>
+
+

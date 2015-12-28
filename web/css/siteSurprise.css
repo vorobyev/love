@@ -1,0 +1,213 @@
+html,
+body {
+    height: 100%;
+    background-color:#3B57A5;
+}
+
+.wrap {
+    min-height: 100%;
+    height: auto;
+    margin: 0 auto -60px;
+    padding: 0 0 60px;
+}
+
+.wrap > .container {
+    padding: 40px 15px 20px;
+}
+
+.footer {
+    height: 60px;
+    background-color: #f5f5f5;
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
+}
+
+.jumbotron {
+    text-align: center;
+    background-color: transparent;
+}
+
+.jumbotron .btn {
+    font-size: 21px;
+    padding: 14px 24px;
+}
+
+.not-set {
+    color: #c55;
+    font-style: italic;
+}
+
+/* add sorting icons to gridview sort links */
+a.asc:after, a.desc:after {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    padding-left: 5px;
+}
+
+a.asc:after {
+    content: /*"\e113"*/ "\e151";
+}
+
+a.desc:after {
+    content: /*"\e114"*/ "\e152";
+}
+
+.sort-numerical a.asc:after {
+    content: "\e153";
+}
+
+.sort-numerical a.desc:after {
+    content: "\e154";
+}
+
+.sort-ordinal a.asc:after {
+    content: "\e155";
+}
+
+.sort-ordinal a.desc:after {
+    content: "\e156";
+}
+
+.grid-view th {
+    white-space: nowrap;
+}
+
+.hint-block {
+    display: block;
+    margin-top: 5px;
+    color: #999;
+}
+
+.error-summary {
+    color: #a94442;
+    background: #fdf7f7;
+    border-left: 3px solid #eed3d7;
+    padding: 10px 20px;
+    margin: 0 0 15px 0;
+}
+
+.navbar {
+    min-height:20px;
+}
+
+.navbar-brand {
+    padding:10px 15px;
+    height:20px;
+}
+
+.navbar-nav  li  a {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.site-content{
+    /*border:black solid 1px;*/
+    margin:auto;
+    width:800px;
+}
+.site-content2{
+    /*border:black solid 1px;*/
+    margin:auto;
+    width:400px;
+}
+
+.slick-track div img {
+    display:inline;
+}
+
+.slick-track div {
+    text-align:center;
+}
+
+table.grid tbody tr td{
+    padding:5px;
+    text-align:center;
+    border:1px solid black;
+    min-width:100px;
+    background-color:#DDE5FE;
+}
+
+table {
+    align:center;
+    margin:0 auto;
+}
+
+.modal-dialog{
+    width:1030px;
+
+}
+
+.modal-content {
+    background-color:#E6DCFE;
+}
+
+.slick-list {
+    /*min-height:600px;*/
+}
+
+.notShowExif {
+    display:none;
+}
+
+.exifMeta {
+    font-family:verdana;
+    font-weight:bold;
+    font-size:8pt;
+}
+
+.exifValue{
+    font-family:verdana;
+    font-weight:normal;
+    font-size:8pt;
+}
+
+.notShowInfo {
+    display:none;
+}
+
+.notShowHref {
+    display:none;
+}
+
+.metaInfo {
+    font-family:verdana;
+    font-weight:bold;
+    font-size:10pt;
+}
+
+.valueInfo{
+    display:block;
+    color:black;
+    padding-top:20px;
+    padding-left:20px;
+    font-family:verdana;
+    font-weight:normal;
+    font-size:10pt;
+}
+
+#footerImage{
+    min-height:200px;
+}
+
+#exifInfo{
+    float:left;
+    max-width: 180px;
+    
+}
+
+#imageInfo{
+    margin-left:200px;
+    margin-top:20px;
+    
+}
+
+#hrMy {
+border-color:#9D80E9;
+border:2px solid #C9B5FE;
+}
+
