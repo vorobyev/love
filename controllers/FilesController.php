@@ -144,7 +144,7 @@ class FilesController extends Controller{
                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
                $kk=$model->getProfilePictureUrl();
                 try {
-                    $exif = exif_read_data("/var/www/html/basic/web/".$kk, 'IFD0');
+                    $exif = exif_read_data($path, 'IFD0');
                     if ($exif!==false) {
                         $exif["path"]=$path;
                         $model->save(false,$exif,$model->profile_pic,$image->size);
